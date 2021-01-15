@@ -33,17 +33,29 @@ def get_homework_statuses(current_timestamp):
         )
         return homework_statuses.json()
     except requests.RequestException as error:
-        return logging.error(error, exc_info=True)
+        logging.error(error, exc_info=True)
+        return {}
 
 
 def parse_homework_status(homework):
     homework_name = homework.get('homework_name')
-    if homework.get('status') == 'rejected':
+    homework_status = homework.get('status')
+    if homework_status == 'rejected':
         verdict = 'К сожалению в работе нашлись ошибки.'
-    else:
+    elif homework_status == 'approved':
         verdict = 'Ревьюеру всё понравилось, можно приступать к следующему уроку.'
+    else:
+        return 'Статус проверки Вашей работы не определён.'
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
+
+def parse_homework_status(homework): 
+    homework_name = homework.get('homework_name') 
+    if homework.get('status') == 'rejected': 
+        verdict = 'К сожалению в работе нашлись ошибки.' 
+    else: 
+        verdict = 'Ревьюеру всё понравилось, можно приступать к следующему уроку.' 
+    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}' 
 
 def send_message(message, bot_client):
     return bot_client.send_message(
@@ -61,8 +73,9 @@ def main():
             new_homework = get_homework_statuses(current_timestamp)
             if new_homework.get('homeworks'):
                 send_message(
-                    parse_homework_status(new_homework.get('homeworks')[0]),
-                    bot)
+                    parse_homework_status(
+                        new_homework.get('homeworks')[0]),
+                        bot)
                 logging.info('Message sent to Telegram')
             current_timestamp = new_homework.get(
                 'current_date',
