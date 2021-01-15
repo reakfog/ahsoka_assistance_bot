@@ -49,14 +49,6 @@ def parse_homework_status(homework):
     return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
 
 
-def parse_homework_status(homework): 
-    homework_name = homework.get('homework_name') 
-    if homework.get('status') == 'rejected': 
-        verdict = 'К сожалению в работе нашлись ошибки.' 
-    else: 
-        verdict = 'Ревьюеру всё понравилось, можно приступать к следующему уроку.' 
-    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}' 
-
 def send_message(message, bot_client):
     return bot_client.send_message(
         chat_id=CHAT_ID,
